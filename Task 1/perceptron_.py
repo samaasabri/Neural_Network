@@ -8,34 +8,24 @@ Original file is located at
 """
 
 import numpy as np
-import pandas as pd
-
-#if bais check box get random value and pass it to the function
-
-# #features must be =(2,1) and  #classes =2
-def perceptron(features , classes , eta , num_of_epochs,bais=0 ):
-  W=np.random.rand(1,2)
-
-  for epoch in range(num_of_epochs):
-
-    for X_i , T_i in zip(features, classes):
-
-      y_i=np.dot(W, X_i)+bais
-      # activation function
-      if y_i<0 :
-        y_i=-1
-      else :
-         y_i=1
 
 
-      #calculate Error
-      if y_i != T_i:
-        L=(T_i-y_i)
-
-        #updating Wieght
-
-        W=W+eta*(T_i-y_i)*X_i
+# if bais check box get random value and pass it to the function
 
 
+def perceptron(X, y, learning_rate=0.01, epochs=1000, b=0):
+    samples, feat = X.shape
+    W = np.random.rand(feat)
+
+    for _ in range(epochs):
+        for i, x in enumerate(X):
+            y_pred = np.dot(x, W) + b
+
+            if y_pred >= 0:
+                y_pred = 1
+            else:
+                y_pred = -1
+            upt = learning_rate * (y[i] - y_pred)
+            W += upt * x
 
     return W
