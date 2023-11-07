@@ -1,3 +1,4 @@
+from Data_Preprocessing import normalization_test
 # -*- coding: utf-8 -*-
 """Testing .ipynb
 
@@ -17,6 +18,7 @@ import pandas as pd
 # X shape >>(2,1)
 # W sahpe>>(1,2)
 def test_fn(x_test, w, b):
+    x_test = normalization_test(x_test)
     y_new = np.dot(x_test, w) + b
     return np.where(y_new >= 0, 1, -1)
 
