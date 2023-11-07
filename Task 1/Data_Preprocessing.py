@@ -4,28 +4,28 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-data = pd.read_excel(r"D:\FCIS\Neural-Network\Project\Neural_Network\Task 1\Data\Dry_Bean_Dataset.xlsx")
+data = pd.read_excel('Data\Dry_Bean_Dataset.xlsx')
 
 data['MinorAxisLength'].fillna(value=data['MinorAxisLength'].mean(), inplace=True)
 
 
 
-def plot_data(X_test, y_test, w, b, lable):
+def plot_data(X_train, y_train, w, b,lable):
     plt.title(lable)
     # Plotting the data points and decision boundary if possible
-    plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test)
+    plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train)
     # Check if the decision boundary is linear
     if w[1] == 0:
         plt.axvline(-b / w[0])
     else:
-        x = np.linspace(np.min(X_test[:, 0]), np.max(X_test[:, 0]), 100)
+        x = np.linspace(np.min(X_train[:, 0]), np.max(X_train[:, 0]), 100)
         y = -(w[0] * x + b) / w[1]
         plt.plot(x, y)
     plt.show()
 
 
 def normalization(data):
-    data = (data - data.min()) / (data.max() - data.min()) * (20 - 7) - 1
+    data = (data - data.min()) / (data.max() - data.min()) * (10-1) - 1
     return data
 
 
