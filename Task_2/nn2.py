@@ -41,7 +41,7 @@ def feedForward(Input_layer,neuron_num,wieght_matrices,activision, hidden_layers
   array_of_fs=[]
 
   def sigmoid(f_i):
-    return 1/(1+np.exp(-f_i))
+    return 1/(1+np.exp(-1*f_i))
 
   def tengent(f_i):
     return np.tanh(f_i)

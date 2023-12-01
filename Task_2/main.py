@@ -212,8 +212,8 @@ def perform_classification():
                 if j[k] == 1:
                     y_train_indeices.append(k)
     
-    prediction = nn2.predict(nn2.x_train, neurons_num, net, act_func_option.get(), hidden_layers_num)
-    print("[Prediction]: ", prediction)
+    prediction_Train = nn2.predict(nn2.x_train, neurons_num, net, act_func_option.get(), hidden_layers_num)
+    print("[Prediction]: ", prediction_Train)
     print("[y_train]: ", y_train_indeices)
     
     
@@ -236,15 +236,24 @@ def perform_classification():
 
 
 
-
+    cm_train = confusion_matrix(y_train_indeices, prediction_Train)
     cm = confusion_matrix(y_test_indeices, prediction)
 
-  
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-    plt.title("Confusion Matrix")
-    plt.xlabel("Predicted Labels")
-    plt.ylabel("True Labels")
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+
+    ax1 = axes[0]
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax1)
+    ax1.set_title("Confusion Matrix Test")
+    ax1.set_xlabel("Predicted Labels")
+    ax1.set_ylabel("True Labels")
+
+    ax2 = axes[1]
+    sns.heatmap(cm_train, annot=True, fmt="d", cmap="Blues", ax=ax2)
+    ax2.set_title("Confusion Matrix Train")
+    ax2.set_xlabel("Predicted Labels")
+    ax2.set_ylabel("True Labels")
+
+    plt.tight_layout()
     plt.show()
     predict_window()
 
