@@ -43,6 +43,6 @@ def feedForward(Input_layer,neurons,wieght_matrices):
     array_of_fs.append(f)
   return  array_of_fs
 
-Input_layer=[1,1,1,1,1,1]
-array_of_fs=feedForward(Input_layer,neurons,wieght_matrices)
-print(array_of_fs)
+# Input_layer=[1,1,1,1,1,1]
+# array_of_fs=feedForward(Input_layer,neurons,wieght_matrices)
+# print(array_of_fs)

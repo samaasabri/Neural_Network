@@ -4,14 +4,16 @@ import ttkbootstrap as ttk # [Line 2]
 # from tkinter import ttk
 # from Data_Preprocessing import plot_data # [Line 1]
 import nn2
-
+from sklearn.metrics import confusion_matrix
 # window
 # root = tk.Tk() # [Line 1]
 root = ttk.Window(themename = "morph") # [Line 2]
 root.title("Task1")
 root.geometry("1000x500+700+200")
 root.configure(background="#D9E3F1")
-
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 # functions 
 
 def handle_selection():
@@ -227,6 +229,23 @@ def perform_classification():
     print("[y_test]: ", y_test_indeices)
     
         
+    
+
+    # confusion_matrix funnction a matrix containing the summary of predictions
+    print(confusion_matrix(y_test_indeices, prediction))  
+
+
+
+
+    cm = confusion_matrix(y_test_indeices, prediction)
+
+  
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+    plt.title("Confusion Matrix")
+    plt.xlabel("Predicted Labels")
+    plt.ylabel("True Labels")
+    plt.show()
     predict_window()
 
 

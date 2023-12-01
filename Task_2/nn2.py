@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.utils import shuffle
 
 Input_layer=[1,1,1,1,1,1]
 hidden_layers=3
@@ -82,6 +84,43 @@ def sigmoid_dash(f_i):
 def tengent_dash(f_i):
     return (1-pow(np.tanh(f_i),2))
 
+# def backPropagate(Target,neuron_num,wieght_matrices,activision,array_of_fs, hidden_layers):
+
+#   neurons = neuron_num.copy()
+#   neurons.append(3)
+
+#   array_of_errors=[]
+#   j=-1
+
+#   for i in range(hidden_layers,-1,-1):
+#     # print("Layer:" ,i)
+#     error=[]
+
+#     for n in range(neurons[i]):
+#       # print("Neuron: ",n)
+#     #check activision function
+#       if activision:
+#         dash = sigmoid_dash(array_of_fs[i][n])
+
+#         if i==hidden_layers:
+#           error_i=(Target[n]- array_of_fs[i][n])*dash
+
+#         else:
+#           wights=calc_weight_arr(wieght_matrices[i+1],n)
+
+#           error_i= np.dot(wights,array_of_errors[j]) *dash
+
+
+#       else:
+#           error_i = tengent_dash(array_of_fs[i][n])
+
+#       error.append(error_i)
+#     array_of_errors.append(error)
+#     j+=1
+#   return array_of_errors
+
+
+
 def backPropagate(Target,neuron_num,wieght_matrices,activision,array_of_fs, hidden_layers):
 
   neurons = neuron_num.copy()
@@ -106,11 +145,17 @@ def backPropagate(Target,neuron_num,wieght_matrices,activision,array_of_fs, hidd
         else:
           wights=calc_weight_arr(wieght_matrices[i+1],n)
 
-          error_i= np.dot(wights,array_of_errors[j]) *dash
+          error_i= np.dot(wights,array_of_errors[j])*dash
 
 
       else:
-          error_i = tengent_dash(array_of_fs[i][n])
+        dash = tengent_dash(array_of_fs[i][n])
+        if i==hidden_layers:
+          error_i=(Target[n]- array_of_fs[i][n])*dash
+
+        else:
+          wights=calc_weight_arr(wieght_matrices[i+1],n)
+          error_i= np.dot(wights,array_of_errors[j])*dash
 
       error.append(error_i)
     array_of_errors.append(error)
@@ -170,7 +215,7 @@ def predict(input,neurons_num,net,Activation_used, hidden_layers):
 import pandas as pd
 import numpy as np
 
-data = pd.read_excel("./Data/Dry_Bean_Dataset.xlsx")
+data = pd.read_csv('C:/Users/salwa/Neural_Network/Task_2/Data/Dry_Bean_Dataset_csv.csv')
 
 data['MinorAxisLength'].fillna(value=data['MinorAxisLength'].mean(), inplace=True)
 
@@ -199,9 +244,11 @@ def normalization_test(data,dMin,dMax):
   print(str(dMin)+" "+str(dMax))
   return data
 
-from sklearn.preprocessing import StandardScaler
+
 
 def preprocess(data):
+
+    data = shuffle(data,random_state=0)  # Shuffle the data before preprocessing
 
     scaler = StandardScaler()
 
@@ -251,7 +298,3 @@ x_train,x_test,y_train,y_test = preprocess(data)
 
 # preds
 
-# from sklearn.metrics import confusion_matrix
-
-# # confusion_matrix funnction a matrix containing the summary of predictions
-# print(confusion_matrix(y_test, predictions))
