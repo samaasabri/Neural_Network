@@ -3,7 +3,11 @@ import tkinter as tk
 # import ttkbootstrap as ttk # [Line 2]
 from tkinter import ttk
 # from Data_Preprocessing import plot_data # [Line 1]
-from train import *
+# from train import *
+import Data_Preprocessing as pp
+from adaline_algo import Adaline
+from perceptron_ import perceptron
+from testing_ import evaluation, test_fn
 
 # window
 root = tk.Tk() # [Line 1]
@@ -14,12 +18,6 @@ root.configure(background="#D9E3F1")
 
 # functions 
 
-def handle_selection():
-    print(selected_algo_option.get())
-    
-def test_bias():
-    print(bias_var.get())
-    
 
 # data
 
@@ -35,20 +33,19 @@ bias_var = tk.BooleanVar(value=False)
 row1 = ttk.Frame(master = root)
 
 class_container = tk.LabelFrame(master = row1, text="Classes")
-class1 = tk.Radiobutton(master = class_container, text="C1 & C2 ", value = 1,  variable = selected_class_option, font="Calibri 13")
+class1 = tk.Radiobutton(master = class_container, text="C1 & C2", value = 1,  variable = selected_class_option, font="Calibri 13")
 class2 = tk.Radiobutton(master = class_container, text="C1 & C3",  value = 2, variable = selected_class_option,font="Calibri 13")
 class3 = tk.Radiobutton(master = class_container, text="C2 & C3",  value = 3, variable = selected_class_option,font="Calibri 13")
 
 
-bias_chk = ttk.Checkbutton(master=row1, text = "Adding Bias", variable=bias_var, command=test_bias)
+bias_chk = ttk.Checkbutton(master=row1, text = "Adding Bias", variable=bias_var)
 
 algorithm_container = tk.LabelFrame(master = row1, text="Algorithms")
-preceptron_algo = tk.Radiobutton(master = algorithm_container, text="Preceptron", value = 1,  variable = selected_algo_option, command = handle_selection, font="Calibri 13")
-adaline_algo = tk.Radiobutton(master = algorithm_container, text="Adaline",  value = 2, variable = selected_algo_option, command = handle_selection, font="Calibri 13")
+preceptron_algo = tk.Radiobutton(master = algorithm_container, text="Preceptron", value = 1,  variable = selected_algo_option, font="Calibri 13")
+adaline_algo = tk.Radiobutton(master = algorithm_container, text="Adaline",  value = 2, variable = selected_algo_option, font="Calibri 13")
 
 
 ## row2
-
 row2 = ttk.Frame(master = root)
 
 
@@ -110,7 +107,7 @@ mse_threshold_input.pack(side="left", padx=10)
 mse_threshold_label.pack(side="left", padx=10)
 
 feature1_combo.pack(side="left", padx=10)
-feature1_combo_label.pack(side="left", padx=10)
+feature1_combo_label.pack(side="left", padx=10) 
 
 
 feature2_combo.pack(side="left", padx=10)
@@ -119,65 +116,11 @@ feature2_combo_label.pack(side="left", padx=10)
 # -------------------------------------------- #
 
 
-
 # wind2 = ttk.Window(themename = "morph") # [Line 2]
 
-
-# take input from gui
-
-w = 0
-b = 0
-
-def predict():
-    print("Value of radio button, ", selected_algo_option.get())
-    class_choice = 1
-
-    if selected_class_option.get() == 2:
-        class_choice = 2
-    elif selected_class_option.get() == 3:
-        class_choice = 3
-
-
-
-    f1 = feature1_combo.get()
-    f2 = feature2_combo.get()
-
-
-    lr = float(learning_rate_input.get())
-    epochs_num = int(epochs_number_input.get())
-    mse = float(mse_threshold_input.get())
-
-
-   
-    x_train1, x_test1, y_train1, y_test1 = Split_my_data(choice=class_choice, feature1=f1, feature2=f2)
-
-    
-
-    if selected_algo_option.get() == 1:
-        print("percrptron function")
-        w_perceptron,b_perceptron = perceptron(x_train1, y_train1, learning_rate=lr,epochs=epochs_num, use_bias=bias_var.get())
-        y_perceptron = (test_fn(x_test1, w_perceptron, b_perceptron))
-        evaluation(y_perceptron, y_test1, "BOMBAY", "CALI")
-        plot_data(x_test1, y_test1, w_perceptron, 0,"Perceptron")
-        w = w_perceptron
-        b = b_perceptron
-
-    elif selected_algo_option.get() == 2:
-        print("adaline function")
-        w_Adaline,b_Adaline = Adaline(x_train1, y_train1, learning_rate=lr,epochs=epochs_num, mse_threshold=mse, use_bias=bias_var.get())
-        y_Adaline = (test_fn(x_test1, w_Adaline, b_Adaline))
-        evaluation(y_Adaline, y_test1, "BOMBAY", "CALI")
-        plot_data(x_test1, y_test1, w_Adaline, 0, "Adaline")
-        w = w_Adaline
-        b = b_Adaline
-
-    
-
-
+# # take input from gui
 
 def testPredict():
-    predict()
-
     win2 = tk.Tk()
     win2.title("Task1 Results")
     win2.geometry("1000x500+700+200")
@@ -211,20 +154,64 @@ def testPredict():
         
         print("data --> ", data)
 
+
         r = test_fn(data, w, b)
         print("test result --> ", r)
 
-        
 
     testBtn = ttk.Button(master = win2, text="Test Sample", command=test_sample)
     
     testBtn.pack()
     
-    
     win2.mainloop()
-    
 
-predict_btn = ttk.Button(master = root, text = "Predict", command = testPredict)
+def predict():
+    class_choice = selected_class_option.get()
+    f1 = feature1_combo.get()
+    f2 = feature2_combo.get()
+    algo_choice = selected_algo_option.get()
+    lr = float(learning_rate_input.get())
+    enum = int(epochs_number_input.get())
+    
+    
+    l1 = ["BOMBAY", "CALI", "SIRA"] 
+    c1 = ""
+    c2 = ""
+
+    if class_choice == 1:
+        c1 = l1[0]
+        c2 = l1[1]
+    elif class_choice == 2:
+        c1 = l1[0]
+        c2 = l1[2]
+    elif class_choice == 3:
+        c1 = l1[1]
+        c2 = l1[2]
+
+    ms = float(mse_threshold_input.get())
+
+    x_train1, x_test1, y_train1, y_test1 = pp.Split_my_data(choice=class_choice, feature1=f1, feature2=f2)
+
+
+    global w, b
+
+    if algo_choice == 1:
+        w_perceptron,b_perceptron = perceptron(x_train1, y_train1, lr, enum, use_bias=bias_var.get())
+        y_perceptron = (test_fn(x_test1, w_perceptron, b_perceptron))
+        evaluation(y_perceptron, y_test1, c1,c2)
+        pp.plot_data(x_test1, y_test1, w_perceptron, 0,"Perceptron")
+        w, b = w_perceptron, b_perceptron
+    elif algo_choice == 2:
+        w_Adaline,b_Adaline = Adaline(x_train1, y_train1,lr, enum, ms, use_bias=bias_var.get())
+        y_Adaline = (test_fn(x_test1, w_Adaline, b_Adaline))
+        evaluation(y_Adaline, y_test1,c1,c2)
+        pp.plot_data(x_test1, y_test1, w_Adaline, 0, "Adaline")
+        w, b =  w_Adaline, b_Adaline
+        
+    testPredict()
+        
+
+predict_btn = ttk.Button(master = root, text = "Predict", command = predict)
 
 
 predict_btn.pack()
